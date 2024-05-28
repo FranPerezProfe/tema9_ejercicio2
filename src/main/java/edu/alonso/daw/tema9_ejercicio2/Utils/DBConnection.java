@@ -5,20 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-	
+
 	private final String DB_NAME = "CURSOS";
-	
+
 	private final String URL = "jdbc:mysql://localhost:3306/" + DB_NAME;
-	
+
 	private final String USER = "root";
-	
+
 	private final String PASS = "";
-	
-	
+
 	private static DBConnection instance;
-	
+
 	private Connection conn;
-	
+
 	private DBConnection() {
 
 		System.out.println("Creando la conexión a la BBDD...");
@@ -34,17 +33,34 @@ public class DBConnection {
 		} catch (SQLException e) {
 			System.err.println("Error al crear la conexión con la BBDD." + e.getMessage());
 		}
-		
+
 	}
-	
+
 	public static synchronized DBConnection getInstance() {
-		
-		if(instance == null) {
+
+		if (instance == null) {
 			instance = new DBConnection();
 		}
-		
+
 		return instance;
 	}
 
-	
+	public Connection getConn() {
+		return conn;
+	}
+
+	public void destroyConnection() {
+
+		try {
+			if (conn != null && !conn.isClosed()) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			instance = null;
+		}
+
+	}
+
 }
